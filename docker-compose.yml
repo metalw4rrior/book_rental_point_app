@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: my_postgres_container
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  
+      POSTGRES_DB: libratrack
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./libratrack.dump:/docker-entrypoint-initdb.d/libratrack.dump
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+    env_file:
+      - .env  
+  flask:
+    image: met4lwar/kursovasya_ud:1.0 
+    build: .
+    container_name: kursuka
+    depends_on:
+      - postgres
+    environment:
+      - FLASK_ENV=development
+      - DB_PASSWORD=${DB_PASSWORD}  
+    ports:
+      - "5001:5000"
+    env_file:
+      - .env  
+
+networks:
+  my_network:
+    driver: bridge

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Книги{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-wrapper">
+        <h2><i class="fas fa-book" style="color: var(--primary); margin-right: 10px;"></i>Каталог книг</h2>
+        <a href="/books/add" class="btn">
+            <i class="fas fa-plus-circle"></i> Добавить книгу
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Автор</th>
+                    <th>Год издания</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>
+                        <strong>{{ book.title }}</strong>
+                        {% if book.is_popular %}
+                            <span class="badge">Популярная</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for author in book.authors %}
+                            {{ author.full_name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ book.publication_year }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('book_bp.edit_book', book_id=book.ID) }}" class="btn-outline">
+                            <i class="fas fa-edit"></i> Редактировать
+                        </a>
+                        <a href="{{ url_for('book_bp.confirm_delete_book', book_id=book.ID) }}" class="btn-outline danger">
+                            <i class="fas fa-trash-alt"></i> Удалить
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .header-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    h2 {
+        color: var(--primary-dark);
+        margin: 0;
+        font-size: 1.8rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th {
+        background-color: var(--primary);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 500;
+    }
+    
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        vertical-align: middle;
+    }
+    
+    tr:nth-child(even) {
+        background-color: rgba(138, 79, 255, 0.03);
+    }
+    
+    tr:hover {
+        background-color: rgba(138, 79, 255, 0.08);
+    }
+    
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .btn-outline {
+        padding: 8px 15px;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .btn-outline:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-outline.danger {
+        border-color: #ff5252;
+        color: #ff5252;
+    }
+    
+    .btn-outline.danger:hover {
+        background-color: #ff5252;
+        color: white;
+    }
+    
+    .badge {
+        background-color: var(--accent);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        margin-left: 8px;
+        vertical-align: middle;
+    }
+    
+    @media (max-width: 768px) {
+        .header-wrapper {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        th, td {
+            padding: 10px 8px;
+            font-size: 0.9rem;
+        }
+        
+        .actions {
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .btn-outline {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}

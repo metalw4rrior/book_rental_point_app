@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Вернуть книгу</h1>
+        <div>
+            <a href="{{ url_for('loan_bp.loans') }}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Вернуться к выдачам
+            </a>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-group alert alert-info mb-4">
+                <h5>Информация о прокате</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Книга:</strong> {{ loan.book.title }}</p>
+                        <p><strong>Читатель:</strong> {{ loan.reader.full_name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Дата выдачи:</strong> {{ loan.issue_date.strftime('%Y-%m-%d') }}</p>
+                        <p><strong>Срок штрафа:</strong> {{ loan.due_date.strftime('%Y-%m-%d') }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <form action="{{ url_for('loan_bp.return_book', loan_id=loan.ID) }}" method="post">
+                <div class="form-group">
+                    <label for="return_date" class="form-label">Дата возврата</label>
+                    <input type="date" class="form-control" id="return_date" name="return_date" value="{{ today.strftime('%Y-%m-%d') }}" required>
+                </div>
+                
+                {% if today > loan.due_date %}
+                <div class="alert alert-warning">
+                    <p><strong>Предупреждение: </strong> 
+                        Эта книга просрочена. Штраф за просрочку будет рассчитан автоматически.</p>
+                </div>
+                {% endif %}
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Зарегистрировать возврат
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border-top: 3px solid var(--primary-light);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary-dark);
+    }
+
+    input[type="date"] {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+
+    input[type="date"]:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(138, 79, 255, 0.2);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-outline:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+</style>
+{% endblock %}

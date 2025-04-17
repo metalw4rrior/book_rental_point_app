@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Новая выдача{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2><i class="fas fa-book-reader" style="color: var(--primary);"></i> Новая выдача книги</h2>
+    
+    <div class="form-main">
+        <div class="form-card">
+            <form method="POST" id="issueBookForm">
+                <div class="form-group">
+                    <label for="book_id">Выбор книги:</label>
+                    <select name="book_id" id="book_id" required>
+                        <option value="">Выберите книгу</option>
+                        {% for book in books %}
+                            <option value="{{ book.ID }}">{{ book.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reader_id">Выбор читателя:</label>
+                    <select name="reader_id" id="reader_id" required>
+                        <option value="">Выберите читателя</option>
+                        {% for reader in readers %}
+                            <option value="{{ reader.ID }}">{{ reader.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="librarian_id">Выдавший сотрудник:</label>
+                    <select name="librarian_id" id="librarian_id" required>
+                        <option value="">Выберите сотрудника</option>
+                        {% for librarian in librarians %}
+                            <option value="{{ librarian.ID }}">{{ librarian.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="issue_date">Дата выдачи:</label>
+                    <input type="date" name="issue_date" id="issue_date" value="{{ today }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="due_date">Дата сдачи:</label>
+                    <input type="date" name="due_date" id="due_date" value="{{ default_due_date }}" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Подтвердить выдачу
+                    </button>
+                    <a href="{{ url_for('loan_bp.loans') }}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Вернуться к выдачам
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .form-container h2 {
+        color: var(--primary-dark);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-main {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border-top: 3px solid var(--primary-light);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary-dark);
+    }
+
+    input, select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(138, 79, 255, 0.2);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-outline:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    @media (max-width: 576px) {
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

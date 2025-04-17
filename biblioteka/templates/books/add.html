@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить книгу{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Добавить новую книгу</h2>
+    
+    <div class="form-grid">
+        <!-- Левая колонка - формы добавления издателя и автора -->
+        <div class="form-sidebar">
+            <div class="form-card">
+                <h3><i class="fas fa-building"></i> Добавить издателя</h3>
+                <form method="POST" action="{{ url_for('book_bp.add_publisher') }}">
+                    <div class="form-group">
+                        <label for="new_publisher_name">Название издательства:</label>
+                        <input type="text" name="name" id="new_publisher_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_publisher_city">Город:</label>
+                        <input type="text" name="city" id="new_publisher_city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_publisher_year">Год основания:</label>
+                        <input type="number" name="founding_year" id="new_publisher_year" min="1000" max="9999">
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i> Сохранить издателя
+                    </button>
+                </form>
+            </div>
+
+            <div class="form-card">
+                <h3><i class="fas fa-user-edit"></i> Добавить автора</h3>
+                <form method="POST" action="{{ url_for('book_bp.add_author') }}">
+                    <div class="form-group">
+                        <label for="new_author_name">Имя автора:</label>
+                        <input type="text" name="full_name" id="new_author_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_author_country">Страна:</label>
+                        <input type="text" name="country" id="new_author_country" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_author_birth_year">Год рождения:</label>
+                        <input type="number" name="birth_year" id="new_author_birth_year" min="1000" max="9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="new_author_bio">Краткая биография:</label>
+                        <textarea name="bio" id="new_author_bio" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-save"></i> Сохранить автора
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Правая колонка - основная форма добавления книги -->
+        <div class="form-main">
+            <div class="form-card">
+                <form method="POST" id="addBookForm">
+                    <div class="form-group">
+                        <label for="title">Название книги:</label>
+                        <input type="text" name="title" required placeholder="Введите название книги">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="publication_year">Год публикации:</label>
+                            <input type="number" name="publication_year" min="1000" max="9999" placeholder="Год публикации">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="page_count">Количество страниц:</label>
+                            <input type="number" name="page_count" min="1" placeholder="Количество страниц">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="condition">Состояние:</label>
+                            <select name="condition" required>
+                                <option value="">Выберите состояние</option>
+                                <option value="New">Новое</option>
+                                <option value="Good">Хорошее</option>
+                                <option value="Fair">Удовлетворительное</option>
+                                <option value="Poor">Плохое</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="publisher_id">Издатель:</label>
+                        <select name="publisher_id" id="publisher_select" required>
+                            <option value="">Выберите издателя</option>
+                            {% for publisher in publishers %}
+                                <option value="{{ publisher.ID }}">{{ publisher.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="author_ids">Авторы:</label>
+                        <select name="author_ids" multiple size="5" id="author_select" required>
+                            {% for author in authors %}
+                                <option value="{{ author.ID }}">{{ author.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-hint">Для выбора нескольких авторов удерживайте Ctrl (Windows) или Command (Mac)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genre_ids">Жанры:</label>
+                        <select name="genre_ids" multiple size="5">
+                            {% for genre in genres %}
+                                <option value="{{ genre.ID }}">{{ genre.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-hint">Для выбора нескольких жанров удерживайте Ctrl (Windows) или Command (Mac)</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-book-medical"></i> Добавить книгу
+                        </button>
+                        <a href="{{ url_for('book_bp.books') }}" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> Назад к списку
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .form-container h2 {
+        color: var(--primary-dark);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+    }
+    
+    .form-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border-top: 3px solid var(--primary-light);
+    }
+    
+    .form-card h3 {
+        color: var(--primary);
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary-dark);
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(138, 79, 255, 0.2);
+    }
+    
+    select[multiple] {
+        min-height: 120px;
+    }
+    
+    .form-hint {
+        display: block;
+        margin-top: 0.3rem;
+        color: #666;
+        font-size: 0.85rem;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    @media (max-width: 992px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-sidebar {
+            order: 2;
+        }
+        
+        .form-main {
+            order: 1;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

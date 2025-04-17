@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать книгу{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2><i class="fas fa-edit" style="color: var(--primary);"></i> Редактировать книгу: {{ book.title }}</h2>
+
+    <div class="form-main">
+        <div class="form-card">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="title">Название:</label>
+                    <input type="text" name="title" value="{{ book.title }}" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="publication_year">Год публикации:</label>
+                        <input type="number" name="publication_year" min="1000" max="9999" value="{{ book.publication_year }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="page_count">Количество страниц:</label>
+                        <input type="number" name="page_count" min="1" value="{{ book.page_count }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="condition">Состояние:</label>
+                        <select name="condition" required>
+                            {% for cond in ['New', 'Good', 'Fair', 'Poor'] %}
+                                <option value="{{ cond }}" {% if book.condition == cond %}selected{% endif %}>{{ cond }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="publisher_id">Издатель:</label>
+                    <select name="publisher_id" required>
+                        {% for publisher in publishers %}
+                            <option value="{{ publisher.ID }}" {% if publisher.ID == book.publisher_id %}selected{% endif %}>
+                                {{ publisher.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="author_ids">Авторы:</label>
+                    <select name="author_ids" multiple size="5" required>
+                        {% for author in authors %}
+                            <option value="{{ author.ID }}" {% if author.ID in current_author_ids %}selected{% endif %}>
+                                {{ author.full_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-hint">Для выбора нескольких авторов удерживайте Ctrl (Windows) или Command (Mac)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="genre_ids">Жанры:</label>
+                    <select name="genre_ids" multiple size="5">
+                        {% for genre in genres %}
+                            <option value="{{ genre.ID }}" {% if genre.ID in current_genre_ids %}selected{% endif %}>
+                                {{ genre.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-hint">Для выбора нескольких жанров удерживайте Ctrl (Windows) или Command (Mac)</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Сохранить изменения
+                    </button>
+                    <a href="{{ url_for('book_bp.books') }}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i> Назад к списку
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .form-container h2 {
+        color: var(--primary-dark);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border-top: 3px solid var(--primary-light);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--primary-dark);
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(138, 79, 255, 0.2);
+    }
+
+    select[multiple] {
+        min-height: 120px;
+    }
+
+    .form-hint {
+        display: block;
+        margin-top: 0.3rem;
+        color: #666;
+        font-size: 0.85rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn-outline {
+        border: 1px solid #ddd;
+        color: var(--primary);
+    }
+
+    .btn-outline:hover {
+        background-color: #f4f4f4;
+    }
+</style>
+{% endblock %}

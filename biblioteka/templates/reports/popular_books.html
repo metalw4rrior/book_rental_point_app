@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Отчет по популярности книг</h1>
+        <div>
+            <a href="{{ url_for('report_bp.reports') }}" class="btn btn-secondary">Вернуться к отчетам</a>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Временной период: </h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('report_bp.popular_books_report') }}" method="get" class="row g-3">
+                <div class="col-md-5">
+                    <label for="start_date" class="form-label">Дата начала</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+                </div>
+                <div class="col-md-5">
+                    <label for="end_date" class="form-label">Дата конца</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Подтвердить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            {% if chart_img %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">График популярности книг</h5>
+                </div>
+                <div class="card-body">
+                    <img src="data:image/png;base64,{{ chart_img }}" class="img-fluid" alt="Popular Books Chart">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Топ 10 книг за период</h5>
+                </div>
+                <div class="card-body">
+                    {% if popular_books %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Рейтинг</th>
+                                    <th>Название</th>
+                                    <th>Выдач: </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for book in popular_books %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ book.title }}</td>
+                                    <td>{{ book.loan_count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info"> Данные по выдачам за выбранный период отсутствуют..</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

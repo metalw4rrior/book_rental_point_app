@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="header-wrapper">
+        <h2>Выдачи книг</h2>
+        <a href="{{ url_for('loan_bp.add_loan') }}" class="btn btn-primary">Добавить выдачу</a>
+    </div>
+
+    <form method="get" class="filter-form">
+        <select name="status" class="form-control">
+            <option value="">Фильтр по статусу</option>
+            <option value="Active" {% if request.args.get('status') == 'Active' %}selected{% endif %}>Активная</option>
+            <option value="Returned" {% if request.args.get('status') == 'Returned' %}selected{% endif %}>Возвращена</option>
+            <option value="Overdue" {% if request.args.get('status') == 'Overdue' %}selected{% endif %}>Просрочена</option>
+        </select>
+        <button type="submit" class="btn btn-secondary mt-2">Фильтр</button>
+    </form>
+
+    <div class="table-responsive mt-4">
+        <table>
+            <thead>
+                <tr>
+                    <th>Книга</th>
+                    <th>Читатель</th>
+                    <th>Сотрудник</th>
+                    <th>Дата выдачи</th>
+                    <th>Дата сдачи</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                <tr>
+                    <td>{{ loan.book.title }}</td>
+                    <td>{{ loan.reader.full_name }}</td> 
+                    <td>{{ loan.librarian.full_name }}</td> 
+                    <td>{{ loan.issue_date }}</td>
+                    <td>{{ loan.due_date }}</td>
+                    <td>{{ loan.status }}</td>
+                    <td class="actions">
+                        {% if loan.status != 'Returned' %}
+                        <a href="{{ url_for('loan_bp.return_book', loan_id=loan.ID) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-undo"></i> Вернуть
+                        </a>
+                        <a href="{{ url_for('loan_bp.extend_loan', loan_id=loan.ID) }}" class="btn btn-info btn-sm">
+                            <i class="fas fa-calendar-plus"></i> Продлить
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    h2 {
+        color: var(--primary-dark);
+        margin: 0;
+        font-size: 1.8rem;
+    }
+
+    .filter-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .filter-form select {
+        padding: 8px 15px;
+        font-size: 1rem;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    .filter-form button {
+        padding: 8px 15px;
+        font-size: 1rem;
+        border-radius: 4px;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .filter-form button:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background-color: var(--primary);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        vertical-align: middle;
+    }
+
+    tr:nth-child(even) {
+        background-color: rgba(138, 79, 255, 0.03);
+    }
+
+    tr:hover {
+        background-color: rgba(138, 79, 255, 0.08);
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 8px 15px;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-warning {
+        background-color: #f39c12;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #e67e22;
+    }
+
+    .btn-info {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #2980b9;
+    }
+
+    .btn i {
+        margin-right: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .header-wrapper {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        th, td {
+            padding: 10px 8px;
+            font-size: 0.9rem;
+        }
+
+        .actions {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .btn {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+{% endblock %}
